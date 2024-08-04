@@ -1,7 +1,7 @@
 package provider
 
 import (
-	"MichaelTheLi/go-hfcc-reader/reader"
+	"github.com/MichaelTheLi/go-hfcc-reader/reader"
 	"strconv"
 	"strings"
 	"time"

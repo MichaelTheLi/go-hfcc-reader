@@ -14,7 +14,7 @@ func TestItemsCountCorrect(t *testing.T) {
 
 func TestMetadataCorrect(t *testing.T) {
 	assert.Fail(t, "Not implemented yet")
-	//reader := hfcc.NewReader("./test_hfcc_format_file.txt")
+	//reader := go-hfcc-reader.NewReader("./test_hfcc_format_file.txt")
 
 	//metadata := reader.GetMetadata()
 	//assert.NotEmpty(t, metadata)

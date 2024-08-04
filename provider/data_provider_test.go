@@ -1,7 +1,7 @@
 package provider
 
 import (
-	"MichaelTheLi/hfcc/reader"
+	"MichaelTheLi/go-hfcc-reader/reader"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"

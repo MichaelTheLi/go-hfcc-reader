@@ -1,4 +1,4 @@
-module MichaelTheLi/hfcc
+module MichaelTheLi/go-hfcc-reader
 
 go 1.22.5
 

@@ -1,4 +1,4 @@
-module MichaelTheLi/go-hfcc-reader
+module github.com/MichaelTheLi/go-hfcc-reader
 
 go 1.22.5
 

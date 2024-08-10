@@ -1,6 +1,6 @@
-package reader
+package admin
 
-type AdminFileReader struct {
+type Reader struct {
 	RawAdminData RawAdminData
 }
 
@@ -28,15 +28,15 @@ type RawAdminDataItem struct {
 	SpanishName string `start:"107" end:"156"`
 }
 
-func NewAdminFileReader() AdminFileReader {
-	return AdminFileReader{
+func NewAdminFileReader() Reader {
+	return Reader{
 		RawAdminData: RawAdminData{
 			Items: []*RawAdminDataItem{},
 		},
 	}
 }
 
-func (source *AdminFileReader) ProcessLine(index int, _ string) interface{} {
+func (source *Reader) ProcessLine(index int, _ string) interface{} {
 	if index == 0 {
 		return &source.RawAdminData.Metadata
 	} else if index >= 6 {

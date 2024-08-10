@@ -2,6 +2,7 @@ package provider
 
 import (
 	"github.com/MichaelTheLi/go-hfcc-reader/reader"
+	"github.com/MichaelTheLi/go-hfcc-reader/reader/program"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -64,12 +65,12 @@ func TestItemIsCorrect(t *testing.T) {
 }
 
 func getProvider() DataProvider {
-	programFileProcessor := reader.NewProgramFileReader()
+	programFileProcessor := program.NewProgramFileReader()
 
 	provider := NewDataProvider(
 		reader.NewFileReader(
 			"../resources/test_hfcc_format_file.txt",
-			reader.LineReader{},
+			reader.NewLineReader(),
 			&programFileProcessor,
 		),
 	)

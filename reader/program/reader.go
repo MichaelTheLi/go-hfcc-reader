@@ -1,6 +1,6 @@
-package reader
+package program
 
-type ProgramFileReader struct {
+type Reader struct {
 	RawProgramsData RawProgramsData
 }
 
@@ -22,7 +22,7 @@ type RawProgramsMetadata struct {
 	Date           string `start:"11" end:"21"`
 }
 
-// Example:
+// RawProgram Example:
 // ;----+----+----+------------------------------+---+----+-------+---+---+-------+------+------+-+-----+----------+---+---+---+-----+-+-----+-----+-----+-------
 // ;FREQ STRT STOP CIRAF ZONES                    LOC POWR AZIMUTH SLW ANT DAYS    FDATE  TDATE MOD AFRQ LANGUAGE   ADM BRC FMO REQ# OLD ALT1 ALT2  ALT3  NOTES
 // ;----+----+----+------------------------------+---+----+-------+---+---+-------+------+------+-+-----+----------+---+---+---+-----+-+-----+-----+-----+-------
@@ -55,8 +55,8 @@ type RawProgram struct {
 	Notes                  string `start:"152" end:"158"`
 }
 
-func NewProgramFileReader() ProgramFileReader {
-	return ProgramFileReader{
+func NewProgramFileReader() Reader {
+	return Reader{
 		RawProgramsData: RawProgramsData{
 			Items:    []*RawProgram{},
 			Metadata: RawProgramsMetadata{},
@@ -67,7 +67,7 @@ func NewProgramFileReader() ProgramFileReader {
 	}
 }
 
-func (source *ProgramFileReader) ProcessLine(index int, _ string) interface{} {
+func (source *Reader) ProcessLine(index int, _ string) interface{} {
 	if index == 0 {
 		return &source.RawProgramsData.Metadata
 	} else if index >= 1 && index <= 5 {

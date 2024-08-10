@@ -2,6 +2,7 @@ package provider
 
 import (
 	"github.com/MichaelTheLi/go-hfcc-reader/reader"
+	"github.com/MichaelTheLi/go-hfcc-reader/reader/program"
 	"strconv"
 	"strings"
 	"time"
@@ -80,7 +81,7 @@ func NewDataProvider(fileReader reader.FileReader) DataProvider {
 
 func (source DataProvider) GetData() Data {
 	processor := source.fileReader.ProcessFile()
-	rawData := processor.(*reader.ProgramFileReader).RawProgramsData
+	rawData := processor.(*program.Reader).RawProgramsData
 
 	for _, item := range rawData.Items {
 		dataItem := source.getDataItem(*item)
@@ -92,7 +93,7 @@ func (source DataProvider) GetData() Data {
 	return source.Data
 }
 
-func (source DataProvider) getMetadata(rawData reader.RawProgramsData) Metadata {
+func (source DataProvider) getMetadata(rawData program.RawProgramsData) Metadata {
 	metadata := rawData.Metadata
 	date, _ := time.Parse("02-Jan-2006", metadata.Date)
 
@@ -104,7 +105,7 @@ func (source DataProvider) getMetadata(rawData reader.RawProgramsData) Metadata 
 	}
 }
 
-func (source DataProvider) getDataItem(rawProgram reader.RawProgram) DataItem {
+func (source DataProvider) getDataItem(rawProgram program.RawProgram) DataItem {
 	// TODO Errors
 	freq, _ := strconv.Atoi(rawProgram.Frequency)
 	power, _ := strconv.Atoi(rawProgram.Power)

@@ -1,23 +1,24 @@
-package reader
+package admin
 
 import (
+	"github.com/MichaelTheLi/go-hfcc-reader/reader"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 )
 
 func TestAdminItemsCountCorrect(t *testing.T) {
-	reader := getAdminReader()
+	fileReader := getReader()
 
-	AdminReader := reader.ProcessFile()
-	rawData := AdminReader.(*AdminFileReader).RawAdminData
+	AdminReader := fileReader.ProcessFile()
+	rawData := AdminReader.(*Reader).RawAdminData
 	assert.Len(t, rawData.Items, 190)
 }
 
 func TestAdminMetadataCorrect(t *testing.T) {
-	reader := getAdminReader()
-	AdminReader := reader.ProcessFile()
-	rawData := AdminReader.(*AdminFileReader).RawAdminData
+	fileReader := getReader()
+	AdminReader := fileReader.ProcessFile()
+	rawData := AdminReader.(*Reader).RawAdminData
 	metadata := rawData.Metadata
 
 	assert.NotEmpty(t, metadata)
@@ -27,9 +28,9 @@ func TestAdminMetadataCorrect(t *testing.T) {
 }
 
 func TestAdminItemIsCorrect(t *testing.T) {
-	reader := getAdminReader()
-	AdminReader := reader.ProcessFile()
-	rawData := AdminReader.(*AdminFileReader).RawAdminData
+	fileReader := getReader()
+	AdminReader := fileReader.ProcessFile()
+	rawData := AdminReader.(*Reader).RawAdminData
 	item := rawData.Items[1]
 
 	assert.Equal(t, "AFS", item.Code)
@@ -38,13 +39,12 @@ func TestAdminItemIsCorrect(t *testing.T) {
 	assert.Equal(t, "Sudafricana (Rep.)", item.SpanishName)
 }
 
-func getAdminReader() FileReader {
+func getReader() reader.FileReader {
 	path, _ := os.Getwd()
 	AdminFileProcessor := NewAdminFileReader()
-	reader := NewFileReader(
-		path+"/../resources/admin.txt",
-		LineReader{},
+	return reader.NewFileReader(
+		path+"/../../resources/admin.txt",
+		reader.NewLineReader(),
 		&AdminFileProcessor,
 	)
-	return reader
 }

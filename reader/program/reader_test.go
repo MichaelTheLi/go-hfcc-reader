@@ -1,23 +1,24 @@
-package reader
+package program
 
 import (
+	"github.com/MichaelTheLi/go-hfcc-reader/reader"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 )
 
 func TestItemsCountCorrect(t *testing.T) {
-	reader := getReader()
+	fileReader := getReader()
 
-	programReader := reader.ProcessFile()
-	rawData := programReader.(*ProgramFileReader).RawProgramsData
+	programReader := fileReader.ProcessFile()
+	rawData := programReader.(*Reader).RawProgramsData
 	assert.Len(t, rawData.Items, 5)
 }
 
 func TestMetadataCorrect(t *testing.T) {
-	reader := getReader()
-	programReader := reader.ProcessFile()
-	rawData := programReader.(*ProgramFileReader).RawProgramsData
+	fileReader := getReader()
+	programReader := fileReader.ProcessFile()
+	rawData := programReader.(*Reader).RawProgramsData
 	metadata := rawData.Metadata
 
 	assert.NotEmpty(t, metadata)
@@ -30,9 +31,9 @@ func TestMetadataCorrect(t *testing.T) {
 }
 
 func TestItemIsCorrect(t *testing.T) {
-	reader := getReader()
-	programReader := reader.ProcessFile()
-	rawData := programReader.(*ProgramFileReader).RawProgramsData
+	fileReader := getReader()
+	programReader := fileReader.ProcessFile()
+	rawData := programReader.(*Reader).RawProgramsData
 	item := rawData.Items[0]
 
 	assert.Equal(t, "2485", item.Frequency)
@@ -61,13 +62,12 @@ func TestItemIsCorrect(t *testing.T) {
 	assert.Equal(t, "NZL", item.Notes)
 }
 
-func getReader() FileReader {
+func getReader() reader.FileReader {
 	path, _ := os.Getwd()
 	programFileProcessor := NewProgramFileReader()
-	reader := NewFileReader(
-		path+"/../resources/test_hfcc_format_file.txt",
-		LineReader{},
+	return reader.NewFileReader(
+		path+"/../../resources/test_hfcc_format_file.txt",
+		reader.NewLineReader(),
 		&programFileProcessor,
 	)
-	return reader
 }

@@ -11,8 +11,7 @@ type RawAdminData struct {
 
 type RawAdminMetadata struct {
 	Date string `start:"11" end:"21"`
-	Name string `start:"23" end:"31"`
-	Note string `start:"33" end:"47"`
+	Name string `start:"23"`
 }
 
 // RawAdminDataItem Example:

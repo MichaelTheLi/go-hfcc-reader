@@ -24,8 +24,7 @@ func TestAdminMetadataCorrect(t *testing.T) {
 
 	assert.NotEmpty(t, metadata)
 	assert.Equal(t, "19-MAR-2012", metadata.Date)
-	assert.Equal(t, "ADMIN.TXT", metadata.Name)
-	assert.Equal(t, "REFERENCE TABLE", metadata.Note)
+	assert.Equal(t, "ADMIN.TXT REFERENCE TABLE", metadata.Name)
 }
 
 func TestAdminItemIsCorrect(t *testing.T) {

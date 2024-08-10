@@ -3,6 +3,7 @@ package admin
 import (
 	"github.com/MichaelTheLi/go-hfcc-reader/reader"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/text/encoding/charmap"
 	"os"
 	"testing"
 )
@@ -46,5 +47,6 @@ func getReader() reader.FileReader {
 		path+"/../../resources/admin.txt",
 		reader.NewLineReader(),
 		&AdminFileProcessor,
+		charmap.ISO8859_1,
 	)
 }

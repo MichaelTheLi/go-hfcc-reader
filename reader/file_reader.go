@@ -10,6 +10,7 @@ import (
 
 type FileReader struct {
 	filePath      string
+	enc           *charmap.Charmap
 	lineReader    LineReader
 	lineProcessor LineProcessor
 }
@@ -18,11 +19,12 @@ type LineProcessor interface {
 	ProcessLine(index int, text string) interface{}
 }
 
-func NewFileReader(filePath string, lineReader LineReader, lineProcessor LineProcessor) FileReader {
+func NewFileReader(filePath string, lineReader LineReader, lineProcessor LineProcessor, enc *charmap.Charmap) FileReader {
 	return FileReader{
 		filePath:      filePath,
 		lineReader:    lineReader,
 		lineProcessor: lineProcessor,
+		enc:           enc,
 	}
 }
 
@@ -38,9 +40,13 @@ func (source FileReader) ProcessFile() LineProcessor {
 		}
 	}(file)
 
-	dec := transform.NewReader(file, charmap.ISO8859_1.NewDecoder())
-
-	scanner := bufio.NewScanner(dec)
+	var scanner *bufio.Scanner
+	if source.enc != nil {
+		dec := transform.NewReader(file, source.enc.NewDecoder())
+		scanner = bufio.NewScanner(dec)
+	} else {
+		scanner = bufio.NewScanner(file)
+	}
 
 	index := 0
 	lineProcessor := source.lineProcessor

@@ -35,9 +35,8 @@ func (lineReader LineReader) fillDataItem(line string, dataItem interface{}) {
 }
 
 func trimSubstr(input string, start int, length int) string {
-	fixedLength := min(length, len(input))
 	return strings.Trim(
-		substr(input, start, fixedLength),
+		substr(input, start, length),
 		" \x00",
 	)
 }
@@ -48,6 +47,8 @@ func substr(input string, start int, end int) string {
 	if start >= len(asRunes) {
 		return ""
 	}
+
+	end = min(end, len(asRunes))
 
 	return string(asRunes[start:end])
 }

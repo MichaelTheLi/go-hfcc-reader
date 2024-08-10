@@ -36,10 +36,10 @@ func NewAdminFileReader() Reader {
 	}
 }
 
-func (source *Reader) ProcessLine(index int, _ string) interface{} {
+func (source *Reader) ProcessLine(index int, text string) interface{} {
 	if index == 0 {
 		return &source.RawAdminData.Metadata
-	} else if index >= 6 {
+	} else if text[0] != ';' {
 		Admin := RawAdminDataItem{}
 		source.RawAdminData.Items = append(source.RawAdminData.Items, &Admin)
 		return &Admin

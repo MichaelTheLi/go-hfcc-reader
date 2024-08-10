@@ -72,6 +72,7 @@ func getProvider() DataProvider {
 			"../resources/test_hfcc_format_file.txt",
 			reader.NewLineReader(),
 			&programFileProcessor,
+			nil,
 		),
 	)
 	return provider

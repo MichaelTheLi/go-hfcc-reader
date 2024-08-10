@@ -67,7 +67,7 @@ func NewProgramFileReader() Reader {
 	}
 }
 
-func (source *Reader) ProcessLine(index int, _ string) interface{} {
+func (source *Reader) ProcessLine(index int, text string) interface{} {
 	if index == 0 {
 		return &source.RawProgramsData.Metadata
 	} else if index >= 1 && index <= 5 {
@@ -78,7 +78,7 @@ func (source *Reader) ProcessLine(index int, _ string) interface{} {
 		} else if index == 3 {
 			return &source.RawProgramsData.Note3
 		}
-	} else if index > 6 {
+	} else if text[0] != ';' {
 		program := RawProgram{}
 		source.RawProgramsData.Items = append(source.RawProgramsData.Items, &program)
 		return &program

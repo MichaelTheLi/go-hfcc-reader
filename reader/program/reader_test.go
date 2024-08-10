@@ -69,5 +69,6 @@ func getReader() reader.FileReader {
 		path+"/../../resources/test_hfcc_format_file.txt",
 		reader.NewLineReader(),
 		&programFileProcessor,
+		nil,
 	)
 }

@@ -3,6 +3,8 @@ package reader
 import (
 	"bufio"
 	"fmt"
+	"golang.org/x/text/encoding/charmap"
+	"golang.org/x/text/transform"
 	"os"
 )
 
@@ -36,7 +38,9 @@ func (source FileReader) ProcessFile() LineProcessor {
 		}
 	}(file)
 
-	scanner := bufio.NewScanner(file)
+	dec := transform.NewReader(file, charmap.ISO8859_1.NewDecoder())
+
+	scanner := bufio.NewScanner(dec)
 
 	index := 0
 	lineProcessor := source.lineProcessor

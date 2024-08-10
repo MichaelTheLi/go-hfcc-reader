@@ -35,8 +35,9 @@ func (lineReader LineReader) fillDataItem(line string, dataItem interface{}) {
 }
 
 func trimSubstr(input string, start int, length int) string {
+	fixedLength := min(length, len(input))
 	return strings.Trim(
-		substr(input, start, length),
+		substr(input, start, fixedLength),
 		" \x00",
 	)
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/MichaelTheLi/go-hfcc-reader/reader/program"
 	"github.com/MichaelTheLi/go-hfcc-reader/reader/site"
 	"github.com/stretchr/testify/assert"
+	"strconv"
 	"testing"
 )
 
@@ -25,11 +26,24 @@ func TestEnricherItemIsCorrect(t *testing.T) {
 	item := items["1022"]
 
 	assert.Equal(t, "1022", item.Item.Id)
-	assert.Equal(t, string(item.Item.Language), item.Language.Code)
-	assert.Equal(t, "Bislama", item.Language.EnglishName)
 
 	assert.Equal(t, string(item.Item.Administration), item.Admin.Code)
 	assert.Equal(t, "Vanuatu", item.Admin.EnglishName)
+
+	assert.Equal(t, strconv.Itoa(int(item.Item.Antenna)), item.Antenna.Code)
+	assert.Equal(t, "CHR(S)4/1/0.3", item.Antenna.Definition)
+
+	assert.Equal(t, string(item.Item.Broadcaster), item.Broadcaster.Code)
+	assert.Equal(t, "Vanuatu Broadcasting and Television Corporation", item.Broadcaster.EnglishName)
+
+	assert.Equal(t, string(item.Item.FmOrgId), item.FmOrg.Code)
+	assert.Equal(t, "Radio New Zealand Ltd.", item.FmOrg.EnglishName)
+
+	assert.Equal(t, string(item.Item.Language), item.Language.Code)
+	assert.Equal(t, "Bislama", item.Language.EnglishName)
+
+	assert.Equal(t, string(item.Item.Location), item.Site.Code)
+	assert.Equal(t, "Port Vila", item.Site.EnglishName)
 }
 
 func getEnricher() DataEnricher {

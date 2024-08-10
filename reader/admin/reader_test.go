@@ -13,7 +13,7 @@ func TestAdminItemsCountCorrect(t *testing.T) {
 
 	AdminReader := fileReader.ProcessFile()
 	rawData := AdminReader.(*Reader).RawAdminData
-	assert.Len(t, rawData.Items, 190)
+	assert.Len(t, rawData.Items, 3)
 }
 
 func TestAdminMetadataCorrect(t *testing.T) {
@@ -31,12 +31,12 @@ func TestAdminItemIsCorrect(t *testing.T) {
 	fileReader := getReader()
 	AdminReader := fileReader.ProcessFile()
 	rawData := AdminReader.(*Reader).RawAdminData
-	item := rawData.Items[1]
+	item := rawData.Items[0]
 
-	assert.Equal(t, "AFS", item.Code)
-	assert.Equal(t, "South Africa", item.EnglishName)
-	assert.Equal(t, "Sudafricaine (Rép.)", item.FrenchName)
-	assert.Equal(t, "Sudafricana (Rep.)", item.SpanishName)
+	assert.Equal(t, "AFG", item.Code)
+	assert.Equal(t, "1================================================1", item.EnglishName)
+	assert.Equal(t, "2================================================2", item.FrenchName)
+	assert.Equal(t, "3===============================================3", item.SpanishName)
 }
 
 func getReader() reader.FileReader {

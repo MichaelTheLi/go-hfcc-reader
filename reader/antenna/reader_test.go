@@ -12,7 +12,7 @@ func TestAntennaItemsCountCorrect(t *testing.T) {
 
 	AntennaReader := fileReader.ProcessFile()
 	rawData := AntennaReader.(*Reader).RawAntennaData
-	assert.Len(t, rawData.Items, 733)
+	assert.Len(t, rawData.Items, 3)
 }
 
 func TestAntennaMetadataCorrect(t *testing.T) {
@@ -39,11 +39,11 @@ func TestAntennaItemWithNotesIsCorrect(t *testing.T) {
 	fileReader := getReader()
 	AntennaReader := fileReader.ProcessFile()
 	rawData := AntennaReader.(*Reader).RawAntennaData
-	item := rawData.Items[727]
+	item := rawData.Items[0]
 
-	assert.Equal(t, "991", item.Code)
-	assert.Equal(t, "to be defined", item.Definition)
-	assert.Equal(t, "Send full", item.Notes)
+	assert.Equal(t, "100", item.Code)
+	assert.Equal(t, "1===============================================1", item.Definition)
+	assert.Equal(t, "2==================2", item.Notes)
 }
 
 func getReader() reader.FileReader {

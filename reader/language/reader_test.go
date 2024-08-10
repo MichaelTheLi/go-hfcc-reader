@@ -12,7 +12,7 @@ func TestLanguageItemsCountCorrect(t *testing.T) {
 
 	LanguageReader := fileReader.ProcessFile()
 	rawData := LanguageReader.(*Reader).RawLanguageData
-	assert.Len(t, rawData.Items, 7699)
+	assert.Len(t, rawData.Items, 3)
 }
 
 func TestLanguageMetadataCorrect(t *testing.T) {
@@ -29,10 +29,10 @@ func TestLanguageItemIsCorrect(t *testing.T) {
 	fileReader := getReader()
 	LanguageReader := fileReader.ProcessFile()
 	rawData := LanguageReader.(*Reader).RawLanguageData
-	item := rawData.Items[4]
+	item := rawData.Items[0]
 
-	assert.Equal(t, "Aae", item.Code)
-	assert.Equal(t, "Arbëreshë Albanian", item.EnglishName)
+	assert.Equal(t, "Aaa", item.Code)
+	assert.Equal(t, "1================================================1", item.EnglishName)
 }
 
 func getReader() reader.FileReader {

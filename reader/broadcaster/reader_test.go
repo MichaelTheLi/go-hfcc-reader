@@ -12,7 +12,7 @@ func TestBroadcasterItemsCountCorrect(t *testing.T) {
 
 	BroadcasterReader := fileReader.ProcessFile()
 	rawData := BroadcasterReader.(*Reader).RawBroadcasterData
-	assert.Len(t, rawData.Items, 303)
+	assert.Len(t, rawData.Items, 3)
 }
 
 func TestBroadcasterMetadataCorrect(t *testing.T) {
@@ -29,9 +29,9 @@ func TestBroadcasterItemIsCorrect(t *testing.T) {
 	fileReader := getReader()
 	BroadcasterReader := fileReader.ProcessFile()
 	rawData := BroadcasterReader.(*Reader).RawBroadcasterData
-	item := rawData.Items[3]
-	assert.Equal(t, "AGM", item.Code)
-	assert.Equal(t, "United States Agency for Global Media (USAGM)", item.EnglishName)
+	item := rawData.Items[0]
+	assert.Equal(t, "ABC", item.Code)
+	assert.Equal(t, "1================================================1", item.EnglishName)
 }
 
 func getReader() reader.FileReader {

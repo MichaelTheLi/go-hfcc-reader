@@ -12,7 +12,7 @@ func TestFmOrgItemsCountCorrect(t *testing.T) {
 
 	FmOrgReader := fileReader.ProcessFile()
 	rawData := FmOrgReader.(*Reader).RawFmOrgData
-	assert.Len(t, rawData.Items, 164)
+	assert.Len(t, rawData.Items, 3)
 }
 
 func TestFmOrgMetadataCorrect(t *testing.T) {
@@ -29,15 +29,15 @@ func TestFmOrgItemIsCorrect(t *testing.T) {
 	fileReader := getReader()
 	FmOrgReader := fileReader.ProcessFile()
 	rawData := FmOrgReader.(*Reader).RawFmOrgData
-	item := rawData.Items[12]
+	item := rawData.Items[0]
 
-	assert.Equal(t, "BAB", item.Code)
-	assert.Equal(t, "Babcock Communications", item.EnglishName)
-	assert.Equal(t, "Mr. Gary Stanley", item.ContactPerson)
-	assert.Equal(t, "+442073445781", item.Telephone)
-	assert.Equal(t, "+442073966227", item.Fax)
-	assert.Equal(t, "opssfm@babcock.co.uk", item.Email)
-	assert.Equal(t, "HFCC/ABU-HFC", item.Notes)
+	assert.Equal(t, "ITU", item.Code)
+	assert.Equal(t, "1================================================1", item.EnglishName)
+	assert.Equal(t, "2==================2", item.ContactPerson)
+	assert.Equal(t, "3===========3", item.Telephone)
+	assert.Equal(t, "4===========4", item.Fax)
+	assert.Equal(t, "5======================================5", item.Email)
+	assert.Equal(t, "6===========6", item.Notes)
 }
 
 func getReader() reader.FileReader {

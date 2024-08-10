@@ -12,7 +12,7 @@ func TestItemsCountCorrect(t *testing.T) {
 
 	programReader := fileReader.ProcessFile()
 	rawData := programReader.(*Reader).RawProgramsData
-	assert.Len(t, rawData.Items, 5)
+	assert.Len(t, rawData.Items, 6)
 }
 
 func TestMetadataCorrect(t *testing.T) {
@@ -60,6 +60,38 @@ func TestItemIsCorrect(t *testing.T) {
 	assert.Equal(t, "2345", item.Alt2)
 	assert.Equal(t, "3456", item.Alt3)
 	assert.Equal(t, "NZL", item.Notes)
+}
+
+func TestItemFullIsCorrect(t *testing.T) {
+	fileReader := getReader()
+	programReader := fileReader.ProcessFile()
+	rawData := programReader.(*Reader).RawProgramsData
+	item := rawData.Items[5]
+
+	assert.Equal(t, "1---", item.Frequency)
+	assert.Equal(t, "2---", item.StartTime)
+	assert.Equal(t, "3---", item.EndTime)
+	assert.Equal(t, "4-----------------------------", item.CIRAF)
+	assert.Equal(t, "5--", item.Location)
+	assert.Equal(t, "6---", item.Power)
+	assert.Equal(t, "7------", item.Azimuth)
+	assert.Equal(t, "8--", item.AntennaSlewAngle)
+	assert.Equal(t, "9--", item.Antenna)
+	assert.Equal(t, "10-----", item.DaysActive)
+	assert.Equal(t, "11----", item.StartDate)
+	assert.Equal(t, "12----", item.EndDate)
+	assert.Equal(t, "D", item.Modulation)
+	assert.Equal(t, "13---", item.AntennaDesignFrequency)
+	assert.Equal(t, "14--------", item.Language)
+	assert.Equal(t, "15-", item.Administration)
+	assert.Equal(t, "16-", item.Broadcaster)
+	assert.Equal(t, "17-", item.FmOrgId)
+	assert.Equal(t, "18---", item.Id)
+	assert.Equal(t, "A", item.OldData)
+	assert.Equal(t, "19---", item.Alt1)
+	assert.Equal(t, "20---", item.Alt2)
+	assert.Equal(t, "21---", item.Alt3)
+	assert.Equal(t, "22-----", item.Notes)
 }
 
 func getReader() reader.FileReader {

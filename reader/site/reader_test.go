@@ -12,7 +12,7 @@ func TestSiteItemsCountCorrect(t *testing.T) {
 
 	SiteReader := fileReader.ProcessFile()
 	rawData := SiteReader.(*Reader).RawSiteData
-	assert.Len(t, rawData.Items, 700)
+	assert.Len(t, rawData.Items, 3)
 }
 
 func TestSiteMetadataCorrect(t *testing.T) {
@@ -29,13 +29,13 @@ func TestSiteItemIsCorrect(t *testing.T) {
 	fileReader := getReader()
 	SiteReader := fileReader.ProcessFile()
 	rawData := SiteReader.(*Reader).RawSiteData
-	item := rawData.Items[2]
+	item := rawData.Items[0]
 
-	assert.Equal(t, "ABG", item.Code)
-	assert.Equal(t, "Abu Ghraib (Bagdadh)", item.EnglishName)
-	assert.Equal(t, "IRQ", item.Administration)
-	assert.Equal(t, "33N19", item.Latitude)
-	assert.Equal(t, "044E15", item.Longitude)
+	assert.Equal(t, "A-A", item.Code)
+	assert.Equal(t, "1============================1", item.EnglishName)
+	assert.Equal(t, "KAZ", item.Administration)
+	assert.Equal(t, "43N17", item.Latitude)
+	assert.Equal(t, "077E00", item.Longitude)
 }
 
 func getReader() reader.FileReader {

@@ -9,25 +9,30 @@ import (
 func TestItemsCountCorrect(t *testing.T) {
 	reader := getReader()
 
-	rawData := reader.GetRawData()
+	programReader := reader.ProcessFile()
+	rawData := programReader.(*ProgramFileReader).RawProgramsData
 	assert.Len(t, rawData.Items, 5)
 }
 
 func TestMetadataCorrect(t *testing.T) {
 	reader := getReader()
-	rawData := reader.GetRawData()
+	programReader := reader.ProcessFile()
+	rawData := programReader.(*ProgramFileReader).RawProgramsData
 	metadata := rawData.Metadata
 
 	assert.NotEmpty(t, metadata)
 	assert.Equal(t, "A24", metadata.Season)
 	assert.Equal(t, "ALL", metadata.Administration)
 	assert.Equal(t, "23-jul-2024", metadata.Date)
-	assert.Equal(t, []string{"Global HF Schedule", "Processed on 23-jul-2024 at 09:37UTC", "Timestamp: 1721727440"}, metadata.Notes)
+	assert.Equal(t, "Global HF Schedule", rawData.Note1.Value)
+	assert.Equal(t, "Processed on 23-jul-2024 at 09:37UTC", rawData.Note2.Value)
+	assert.Equal(t, "Timestamp: 1721727440", rawData.Note3.Value)
 }
 
 func TestItemIsCorrect(t *testing.T) {
 	reader := getReader()
-	rawData := reader.GetRawData()
+	programReader := reader.ProcessFile()
+	rawData := programReader.(*ProgramFileReader).RawProgramsData
 	item := rawData.Items[0]
 
 	assert.Equal(t, "2485", item.Frequency)
@@ -58,6 +63,11 @@ func TestItemIsCorrect(t *testing.T) {
 
 func getReader() FileReader {
 	path, _ := os.Getwd()
-	reader := NewFileReader(path + "/../resources/test_hfcc_format_file.txt")
+	programFileProcessor := NewProgramFileReader()
+	reader := NewFileReader(
+		path+"/../resources/test_hfcc_format_file.txt",
+		LineReader{},
+		&programFileProcessor,
+	)
 	return reader
 }

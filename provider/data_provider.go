@@ -79,73 +79,75 @@ func NewDataProvider(fileReader reader.FileReader) DataProvider {
 }
 
 func (source DataProvider) GetData() Data {
-	rawData := source.fileReader.GetRawData()
+	processor := source.fileReader.ProcessFile()
+	rawData := processor.(*reader.ProgramFileReader).RawProgramsData
 
 	for _, item := range rawData.Items {
-		dataItem := source.getDataItem(item)
+		dataItem := source.getDataItem(*item)
 		source.Data.ProgramsList[dataItem.Id] = dataItem
 	}
 
-	source.Data.Metadata = source.getMetadata(rawData.Metadata)
+	source.Data.Metadata = source.getMetadata(rawData)
 
 	return source.Data
 }
 
-func (source DataProvider) getMetadata(metadata reader.FileRawMetadata) Metadata {
+func (source DataProvider) getMetadata(rawData reader.RawProgramsData) Metadata {
+	metadata := rawData.Metadata
 	date, _ := time.Parse("02-Jan-2006", metadata.Date)
 
 	return Metadata{
 		Season:         metadata.Season,
 		Administration: metadata.Administration,
 		Date:           date,
-		Notes:          metadata.Notes,
+		Notes:          []string{rawData.Note1.Value, rawData.Note2.Value, rawData.Note3.Value},
 	}
 }
 
-func (source DataProvider) getDataItem(item reader.RawDataItem) DataItem {
+func (source DataProvider) getDataItem(rawProgram reader.RawProgram) DataItem {
 	// TODO Errors
-	freq, _ := strconv.Atoi(item.Frequency)
-	power, _ := strconv.Atoi(item.Power)
-	azimuth, _ := strconv.Atoi(item.Azimuth)
-	antennaSlewAngle, _ := strconv.Atoi(item.AntennaSlewAngle)
-	antennaId, _ := strconv.Atoi(item.Antenna)
+	freq, _ := strconv.Atoi(rawProgram.Frequency)
+	power, _ := strconv.Atoi(rawProgram.Power)
+	azimuth, _ := strconv.Atoi(rawProgram.Azimuth)
+	antennaSlewAngle, _ := strconv.Atoi(rawProgram.AntennaSlewAngle)
+	antennaId, _ := strconv.Atoi(rawProgram.Antenna)
 
 	var cirafZones []CIRAFZoneId
-	var rawCirafZones = strings.Split(item.CIRAF, ",")
+	var rawCirafZones = strings.Split(rawProgram.CIRAF, ",")
 	for i := range rawCirafZones {
 		cirafZones = append(cirafZones, CIRAFZoneId(rawCirafZones[i]))
 	}
 	var daysActive []time.Weekday
-	for i := range item.DaysActive {
-		dayNum, _ := strconv.Atoi(string(item.DaysActive[i]))
+	for i := range rawProgram.DaysActive {
+		dayNum, _ := strconv.Atoi(string(rawProgram.DaysActive[i]))
 		daysActive = append(daysActive, time.Weekday(dayNum-1))
 	}
 	var alternativeFrequencies []int
 
-	if item.Alt1 != "" {
-		altFreq, _ := strconv.Atoi(item.Alt1)
+	if rawProgram.Alt1 != "" {
+		altFreq, _ := strconv.Atoi(rawProgram.Alt1)
 		alternativeFrequencies = append(alternativeFrequencies, altFreq)
 	}
-	if item.Alt2 != "" {
-		altFreq, _ := strconv.Atoi(item.Alt2)
+	if rawProgram.Alt2 != "" {
+		altFreq, _ := strconv.Atoi(rawProgram.Alt2)
 		alternativeFrequencies = append(alternativeFrequencies, altFreq)
 	}
-	if item.Alt3 != "" {
-		altFreq, _ := strconv.Atoi(item.Alt3)
+	if rawProgram.Alt3 != "" {
+		altFreq, _ := strconv.Atoi(rawProgram.Alt3)
 		alternativeFrequencies = append(alternativeFrequencies, altFreq)
 	}
 
-	antennaDesignFrequency, _ := strconv.Atoi(item.AntennaDesignFrequency)
+	antennaDesignFrequency, _ := strconv.Atoi(rawProgram.AntennaDesignFrequency)
 
-	startDate, _ := time.Parse("020106", item.StartDate)
-	endDate, _ := time.Parse("020106", item.EndDate)
+	startDate, _ := time.Parse("020106", rawProgram.StartDate)
+	endDate, _ := time.Parse("020106", rawProgram.EndDate)
 	dataItem := DataItem{
-		Id:                     item.Id,
+		Id:                     rawProgram.Id,
 		Frequency:              freq,
-		StartTime:              item.StartTime,
-		EndTime:                item.EndTime,
+		StartTime:              rawProgram.StartTime,
+		EndTime:                rawProgram.EndTime,
 		CIRAFZones:             cirafZones,
-		Location:               LocationId(item.Location),
+		Location:               LocationId(rawProgram.Location),
 		Power:                  power,
 		Azimuth:                azimuth,
 		AntennaSlewAngle:       antennaSlewAngle,
@@ -153,14 +155,14 @@ func (source DataProvider) getDataItem(item reader.RawDataItem) DataItem {
 		DaysActive:             daysActive,
 		StartDate:              startDate,
 		EndDate:                endDate,
-		Modulation:             Modulation(item.Modulation),
+		Modulation:             Modulation(rawProgram.Modulation),
 		AntennaDesignFrequency: antennaDesignFrequency,
-		Language:               LanguageCode(item.Language),
-		Administration:         AdministrationId(item.Administration),
-		Broadcaster:            BroadcasterId(item.Broadcaster),
-		FmOrgId:                FMOrgId(item.FmOrgId),
+		Language:               LanguageCode(rawProgram.Language),
+		Administration:         AdministrationId(rawProgram.Administration),
+		Broadcaster:            BroadcasterId(rawProgram.Broadcaster),
+		FmOrgId:                FMOrgId(rawProgram.FmOrgId),
 		AlternativeFrequencies: alternativeFrequencies,
-		Notes:                  item.Notes,
+		Notes:                  rawProgram.Notes,
 	}
 	return dataItem
 }

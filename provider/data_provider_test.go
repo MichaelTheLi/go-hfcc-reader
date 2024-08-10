@@ -64,8 +64,14 @@ func TestItemIsCorrect(t *testing.T) {
 }
 
 func getProvider() DataProvider {
+	programFileProcessor := reader.NewProgramFileReader()
+
 	provider := NewDataProvider(
-		reader.NewFileReader("../resources/test_hfcc_format_file.txt"),
+		reader.NewFileReader(
+			"../resources/test_hfcc_format_file.txt",
+			reader.LineReader{},
+			&programFileProcessor,
+		),
 	)
 	return provider
 }

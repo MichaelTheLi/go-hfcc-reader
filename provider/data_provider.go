@@ -8,8 +8,20 @@ import (
 )
 
 type DataProvider struct {
-	fileReader   reader.FileReader
-	programsList map[string]DataItem
+	fileReader reader.FileReader
+	Data       Data
+}
+
+type Data struct {
+	ProgramsList map[string]DataItem
+	Metadata     Metadata
+}
+
+type Metadata struct {
+	Season         string
+	Administration string
+	Date           time.Time
+	Notes          []string
 }
 
 type CIRAFZoneId string
@@ -59,19 +71,35 @@ func (dataItem DataItem) Name() string {
 
 func NewDataProvider(fileReader reader.FileReader) DataProvider {
 	return DataProvider{
-		fileReader:   fileReader,
-		programsList: make(map[string]DataItem),
+		fileReader: fileReader,
+		Data: Data{
+			ProgramsList: make(map[string]DataItem),
+		},
 	}
 }
 
-func (source DataProvider) PullRawData() map[string]DataItem {
-	rawItems := source.fileReader.GetRawItems()
+func (source DataProvider) GetData() Data {
+	rawData := source.fileReader.GetRawData()
 
-	for _, item := range rawItems {
+	for _, item := range rawData.Items {
 		dataItem := source.getDataItem(item)
-		source.programsList[dataItem.Id] = dataItem
+		source.Data.ProgramsList[dataItem.Id] = dataItem
 	}
-	return source.programsList
+
+	source.Data.Metadata = source.getMetadata(rawData.Metadata)
+
+	return source.Data
+}
+
+func (source DataProvider) getMetadata(metadata reader.FileRawMetadata) Metadata {
+	date, _ := time.Parse("02-Jan-2006", metadata.Date)
+
+	return Metadata{
+		Season:         metadata.Season,
+		Administration: metadata.Administration,
+		Date:           date,
+		Notes:          metadata.Notes,
+	}
 }
 
 func (source DataProvider) getDataItem(item reader.RawDataItem) DataItem {

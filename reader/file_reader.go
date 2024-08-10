@@ -10,8 +10,20 @@ import (
 )
 
 type FileReader struct {
-	filePath string
-	items    []RawDataItem
+	filePath    string
+	FileRawData FileRawData
+}
+
+type FileRawData struct {
+	Items    []RawDataItem
+	Metadata FileRawMetadata
+}
+
+type FileRawMetadata struct {
+	Season         string
+	Administration string
+	Date           string
+	Notes          []string
 }
 
 // Example:
@@ -49,12 +61,12 @@ type RawDataItem struct {
 
 func NewFileReader(filePath string) FileReader {
 	return FileReader{
-		filePath: filePath,
-		items:    []RawDataItem{},
+		filePath:    filePath,
+		FileRawData: FileRawData{},
 	}
 }
 
-func (source FileReader) GetRawItems() []RawDataItem {
+func (source FileReader) GetRawData() FileRawData {
 	file, err := os.Open(source.filePath)
 	if err != nil {
 		fmt.Println(err)
@@ -67,7 +79,9 @@ func (source FileReader) GetRawItems() []RawDataItem {
 	}(file)
 
 	scanner := bufio.NewScanner(file)
+
 	var started = false
+	index := 0
 	for scanner.Scan() {
 		var text = scanner.Text()
 
@@ -80,15 +94,24 @@ func (source FileReader) GetRawItems() []RawDataItem {
 
 		if started {
 			dataItem := source.getDataItem(text)
-			source.items = append(source.items, dataItem)
+			source.FileRawData.Items = append(source.FileRawData.Items, dataItem)
+		} else {
+			if index == 0 {
+				source.FileRawData.Metadata.Season = trimSubstr(text, 2, 5)
+				source.FileRawData.Metadata.Administration = trimSubstr(text, 6, 9)
+				source.FileRawData.Metadata.Date = trimSubstr(text, 10, 21)
+			} else if index > 0 && index < 4 {
+				source.FileRawData.Metadata.Notes = append(source.FileRawData.Metadata.Notes, trimSubstr(text, 2, len(text)))
+			}
 		}
+		index += 1
 	}
 
 	if err := scanner.Err(); err != nil {
 		fmt.Println(err)
 	}
 
-	return source.items
+	return source.FileRawData
 }
 
 func (source FileReader) getDataItem(line string) RawDataItem {

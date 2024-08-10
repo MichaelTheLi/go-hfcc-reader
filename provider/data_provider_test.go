@@ -8,29 +8,30 @@ import (
 )
 
 func TestItemsCountCorrect(t *testing.T) {
-	provider := NewDataProvider(
-		reader.NewFileReader("../resources/test_hfcc_format_file.txt"),
-	)
-	items := provider.PullRawData()
+	provider := getProvider()
+	items := provider.GetData()
 	assert.NotEmpty(t, items)
 }
 
 func TestFileMetadataCorrect(t *testing.T) {
-	assert.Fail(t, "Not implemented yet")
-	//provider := NewDataProvider(
-	//	reader.NewFileReader("../resources/test_hfcc_format_file.txt"),
-	//)
+	provider := getProvider()
+	data := provider.GetData()
+	metadata := data.Metadata
 
-	//metadata := provider.GetMetadata()
-	//assert.NotEmpty(t, metadata)
+	assert.NotEmpty(t, metadata)
+	assert.Equal(t, "A24", metadata.Season)
+	assert.Equal(t, "ALL", metadata.Administration)
+
+	expectedDate, err := time.Parse("02.01.06", "23.07.24")
+	assert.Nil(t, err)
+	assert.Equal(t, expectedDate, metadata.Date)
+	assert.Equal(t, []string{"Global HF Schedule", "Processed on 23-jul-2024 at 09:37UTC", "Timestamp: 1721727440"}, metadata.Notes)
 }
 
 func TestItemIsCorrect(t *testing.T) {
-	provider := NewDataProvider(
-		reader.NewFileReader("../resources/test_hfcc_format_file.txt"),
-	)
-	items := provider.PullRawData()
-	item := items["1022"]
+	provider := getProvider()
+	data := provider.GetData()
+	item := data.ProgramsList["1022"]
 
 	assert.Equal(t, 2485, item.Frequency)
 	assert.Equal(t, "1000", item.StartTime)
@@ -60,4 +61,11 @@ func TestItemIsCorrect(t *testing.T) {
 	assert.Equal(t, "1022", item.Id)
 	assert.Equal(t, []int{1234, 2345, 3456}, item.AlternativeFrequencies)
 	assert.Equal(t, "NZL", item.Notes)
+}
+
+func getProvider() DataProvider {
+	provider := NewDataProvider(
+		reader.NewFileReader("../resources/test_hfcc_format_file.txt"),
+	)
+	return provider
 }

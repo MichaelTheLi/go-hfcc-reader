@@ -2,28 +2,33 @@ package reader
 
 import (
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
 )
 
 func TestItemsCountCorrect(t *testing.T) {
-	reader := NewFileReader("../resources/test_hfcc_format_file.txt")
+	reader := getReader()
 
-	items := reader.GetRawItems()
-	assert.Len(t, items, 5)
+	rawData := reader.GetRawData()
+	assert.Len(t, rawData.Items, 5)
 }
 
 func TestMetadataCorrect(t *testing.T) {
-	assert.Fail(t, "Not implemented yet")
-	//reader := go-hfcc-reader.NewReader("./test_hfcc_format_file.txt")
+	reader := getReader()
+	rawData := reader.GetRawData()
+	metadata := rawData.Metadata
 
-	//metadata := reader.GetMetadata()
-	//assert.NotEmpty(t, metadata)
+	assert.NotEmpty(t, metadata)
+	assert.Equal(t, "A24", metadata.Season)
+	assert.Equal(t, "ALL", metadata.Administration)
+	assert.Equal(t, "23-jul-2024", metadata.Date)
+	assert.Equal(t, []string{"Global HF Schedule", "Processed on 23-jul-2024 at 09:37UTC", "Timestamp: 1721727440"}, metadata.Notes)
 }
 
 func TestItemIsCorrect(t *testing.T) {
-	reader := NewFileReader("../resources/test_hfcc_format_file.txt")
-	items := reader.GetRawItems()
-	item := items[0]
+	reader := getReader()
+	rawData := reader.GetRawData()
+	item := rawData.Items[0]
 
 	assert.Equal(t, "2485", item.Frequency)
 	assert.Equal(t, "1000", item.StartTime)
@@ -49,4 +54,10 @@ func TestItemIsCorrect(t *testing.T) {
 	assert.Equal(t, "2345", item.Alt2)
 	assert.Equal(t, "3456", item.Alt3)
 	assert.Equal(t, "NZL", item.Notes)
+}
+
+func getReader() FileReader {
+	path, _ := os.Getwd()
+	reader := NewFileReader(path + "/../resources/test_hfcc_format_file.txt")
+	return reader
 }

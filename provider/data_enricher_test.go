@@ -15,14 +15,14 @@ import (
 )
 
 func TestEnricherItemsCountCorrect(t *testing.T) {
-	enricher := getEnricher()
-	items := enricher.GetEnrichedData()
+	enricher, _ := getEnricher()
+	items, _ := enricher.GetEnrichedData()
 	assert.Len(t, items, 5)
 }
 
 func TestEnricherItemIsCorrect(t *testing.T) {
-	enricher := getEnricher()
-	items := enricher.GetEnrichedData()
+	enricher, _ := getEnricher()
+	items, _ := enricher.GetEnrichedData()
 	item := items["1022"]
 
 	assert.Equal(t, "1022", item.Item.Id)
@@ -46,95 +46,196 @@ func TestEnricherItemIsCorrect(t *testing.T) {
 	assert.Equal(t, "Port Vila", item.Site.EnglishName)
 }
 
-func getEnricher() DataEnricher {
-	provider := NewDataProvider(
-		getProgramReader(),
+func TestEnricherFailsIfAdminFileFails(t *testing.T) {
+	data, _ := getData()
+
+	enricher := NewDataEnricher(
+		data,
+		getAdminReader("admin1"),
+		getAntennaReader("antenna"),
+		getBroadcasterReader("broadcas"),
+		getFmOrgReader("fmorg"),
+		getLanguageReader("language"),
+		getSiteReader("site"),
 	)
 
-	return NewDataEnricher(
-		provider.GetData(),
-		getAdminReader(),
-		getAntennaReader(),
-		getBroadcasterReader(),
-		getFmOrgReader(),
-		getLanguageReader(),
-		getSiteReader(),
-	)
+	items, err := enricher.GetEnrichedData()
+	assert.NotNil(t, err)
+	assert.Equal(t, "open resources/admin1.txt: no such file or directory", err.Error())
+	assert.Nil(t, items)
 }
 
-func getAdminReader() reader.FileReader {
+func TestEnricherFailsIfAntennasFileFails(t *testing.T) {
+	data, _ := getData()
+
+	enricher := NewDataEnricher(
+		data,
+		getAdminReader("admin"),
+		getAntennaReader("antenna1"),
+		getBroadcasterReader("broadcas"),
+		getFmOrgReader("fmorg"),
+		getLanguageReader("language"),
+		getSiteReader("site"),
+	)
+
+	items, err := enricher.GetEnrichedData()
+	assert.NotNil(t, err)
+	assert.Equal(t, "open resources/antenna1.txt: no such file or directory", err.Error())
+	assert.Nil(t, items)
+}
+
+func TestEnricherFailsIfBroadcasFileFails(t *testing.T) {
+	data, _ := getData()
+
+	enricher := NewDataEnricher(
+		data,
+		getAdminReader("admin"),
+		getAntennaReader("antenna"),
+		getBroadcasterReader("broadcas1"),
+		getFmOrgReader("fmorg"),
+		getLanguageReader("language"),
+		getSiteReader("site"),
+	)
+
+	items, err := enricher.GetEnrichedData()
+	assert.NotNil(t, err)
+	assert.Equal(t, "open resources/broadcas1.txt: no such file or directory", err.Error())
+	assert.Nil(t, items)
+}
+
+func TestEnricherFailsIfFmOrgFileFails(t *testing.T) {
+	data, _ := getData()
+
+	enricher := NewDataEnricher(
+		data,
+		getAdminReader("admin"),
+		getAntennaReader("antenna"),
+		getBroadcasterReader("broadcas"),
+		getFmOrgReader("fmorg1"),
+		getLanguageReader("language"),
+		getSiteReader("site"),
+	)
+
+	items, err := enricher.GetEnrichedData()
+	assert.NotNil(t, err)
+	assert.Equal(t, "open resources/fmorg1.txt: no such file or directory", err.Error())
+	assert.Nil(t, items)
+}
+func TestEnricherFailsIfLanguagesFileFails(t *testing.T) {
+	data, _ := getData()
+
+	enricher := NewDataEnricher(
+		data,
+		getAdminReader("admin"),
+		getAntennaReader("antenna"),
+		getBroadcasterReader("broadcas"),
+		getFmOrgReader("fmorg"),
+		getLanguageReader("language1"),
+		getSiteReader("site"),
+	)
+
+	items, err := enricher.GetEnrichedData()
+	assert.NotNil(t, err)
+	assert.Equal(t, "open resources/language1.txt: no such file or directory", err.Error())
+	assert.Nil(t, items)
+}
+func TestEnricherFailsIfSiteFileFails(t *testing.T) {
+	data, _ := getData()
+
+	enricher := NewDataEnricher(
+		data,
+		getAdminReader("admin"),
+		getAntennaReader("antenna"),
+		getBroadcasterReader("broadcas"),
+		getFmOrgReader("fmorg"),
+		getLanguageReader("language"),
+		getSiteReader("site1"),
+	)
+
+	items, err := enricher.GetEnrichedData()
+	assert.NotNil(t, err)
+	assert.Equal(t, "open resources/site1.txt: no such file or directory", err.Error())
+	assert.Nil(t, items)
+}
+
+func getEnricher() (*DataEnricher, error) {
+	data, err := getData()
+	if err != nil {
+		return nil, err
+	}
+
+	enricher := NewDataEnricher(
+		data,
+		getAdminReader("admin"),
+		getAntennaReader("antenna"),
+		getBroadcasterReader("broadcas"),
+		getFmOrgReader("fmorg"),
+		getLanguageReader("language"),
+		getSiteReader("site"),
+	)
+
+	return &enricher, nil
+}
+
+func getData() (*Data, error) {
+	provider := NewDataProvider(
+		getProgramReader("test_hfcc_format_file"),
+	)
+
+	data, err := provider.GetData()
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func getAdminReader(name string) reader.FileReader {
 	processor := admin.NewAdminFileReader()
 
-	return reader.NewFileReader(
-		"resources/admin.txt",
-		reader.NewLineReader(),
-		&processor,
-		nil,
-	)
+	return getFileReader(name, &processor)
 }
 
-func getAntennaReader() reader.FileReader {
+func getAntennaReader(name string) reader.FileReader {
 	processor := antenna.NewAntennaFileReader()
 
-	return reader.NewFileReader(
-		"resources/antenna.txt",
-		reader.NewLineReader(),
-		&processor,
-		nil,
-	)
+	return getFileReader(name, &processor)
 }
 
-func getBroadcasterReader() reader.FileReader {
+func getBroadcasterReader(name string) reader.FileReader {
 	processor := broadcaster.NewBroadcasterFileReader()
 
-	return reader.NewFileReader(
-		"resources/broadcas.txt",
-		reader.NewLineReader(),
-		&processor,
-		nil,
-	)
+	return getFileReader(name, &processor)
 }
 
-func getFmOrgReader() reader.FileReader {
+func getFmOrgReader(name string) reader.FileReader {
 	processor := fmOrg.NewFmOrgFileReader()
 
-	return reader.NewFileReader(
-		"resources/fmorg.txt",
-		reader.NewLineReader(),
-		&processor,
-		nil,
-	)
+	return getFileReader(name, &processor)
 }
 
-func getLanguageReader() reader.FileReader {
-	languageFileProcessor := language.NewLanguageFileReader()
+func getLanguageReader(name string) reader.FileReader {
+	processor := language.NewLanguageFileReader()
 
-	return reader.NewFileReader(
-		"resources/language.txt",
-		reader.NewLineReader(),
-		&languageFileProcessor,
-		nil,
-	)
+	return getFileReader(name, &processor)
 }
 
-func getProgramReader() reader.FileReader {
+func getProgramReader(name string) reader.FileReader {
 	processor := program.NewProgramFileReader()
 
-	return reader.NewFileReader(
-		"resources/test_hfcc_format_file.txt",
-		reader.NewLineReader(),
-		&processor,
-		nil,
-	)
+	return getFileReader(name, &processor)
 }
 
-func getSiteReader() reader.FileReader {
+func getSiteReader(name string) reader.FileReader {
 	processor := site.NewSiteFileReader()
 
+	return getFileReader(name, &processor)
+}
+
+func getFileReader(name string, processor reader.LineProcessor) reader.FileReader {
 	return reader.NewFileReader(
-		"resources/site.txt",
+		"resources/"+name+".txt",
 		reader.NewLineReader(),
-		&processor,
+		processor,
 		nil,
 	)
 }

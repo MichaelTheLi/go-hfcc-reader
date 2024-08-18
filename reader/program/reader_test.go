@@ -10,14 +10,16 @@ import (
 func TestItemsCountCorrect(t *testing.T) {
 	fileReader := getReader()
 
-	programReader := fileReader.ProcessFile()
+	programReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := programReader.(*Reader).RawProgramsData
 	assert.Len(t, rawData.Items, 6)
 }
 
 func TestMetadataCorrect(t *testing.T) {
 	fileReader := getReader()
-	programReader := fileReader.ProcessFile()
+	programReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := programReader.(*Reader).RawProgramsData
 	metadata := rawData.Metadata
 
@@ -32,7 +34,8 @@ func TestMetadataCorrect(t *testing.T) {
 
 func TestItemIsCorrect(t *testing.T) {
 	fileReader := getReader()
-	programReader := fileReader.ProcessFile()
+	programReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := programReader.(*Reader).RawProgramsData
 	item := rawData.Items[0]
 
@@ -64,7 +67,8 @@ func TestItemIsCorrect(t *testing.T) {
 
 func TestItemFullIsCorrect(t *testing.T) {
 	fileReader := getReader()
-	programReader := fileReader.ProcessFile()
+	programReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := programReader.(*Reader).RawProgramsData
 	item := rawData.Items[5]
 

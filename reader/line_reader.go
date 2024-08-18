@@ -29,7 +29,8 @@ func (lineReader LineReader) fillDataItem(line string, dataItem interface{}) err
 		if endErr != nil {
 			end = len(line)
 		}
-		if start > end {
+
+		if endErr == nil && start > end {
 			return errors.New("invalid start or end for the " + field.Name + " field: start should be lower than end")
 		}
 

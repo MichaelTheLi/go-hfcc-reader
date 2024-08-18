@@ -10,14 +10,16 @@ import (
 func TestSiteItemsCountCorrect(t *testing.T) {
 	fileReader := getReader()
 
-	SiteReader := fileReader.ProcessFile()
+	SiteReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := SiteReader.(*Reader).RawSiteData
 	assert.Len(t, rawData.Items, 3)
 }
 
 func TestSiteMetadataCorrect(t *testing.T) {
 	fileReader := getReader()
-	SiteReader := fileReader.ProcessFile()
+	SiteReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := SiteReader.(*Reader).RawSiteData
 	metadata := rawData.Metadata
 	assert.NotEmpty(t, metadata)
@@ -27,7 +29,8 @@ func TestSiteMetadataCorrect(t *testing.T) {
 
 func TestSiteItemIsCorrect(t *testing.T) {
 	fileReader := getReader()
-	SiteReader := fileReader.ProcessFile()
+	SiteReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := SiteReader.(*Reader).RawSiteData
 	item := rawData.Items[0]
 

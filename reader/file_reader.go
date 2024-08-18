@@ -2,7 +2,6 @@ package reader
 
 import (
 	"bufio"
-	"fmt"
 	"golang.org/x/text/encoding/charmap"
 	"golang.org/x/text/transform"
 	"os"
@@ -28,10 +27,10 @@ func NewFileReader(filePath string, lineReader LineReader, lineProcessor LinePro
 	}
 }
 
-func (source FileReader) ProcessFile() LineProcessor {
+func (source FileReader) ProcessFile() (LineProcessor, error) {
 	file, err := os.Open(source.filePath)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 	defer func(file *os.File) {
 		err := file.Close()
@@ -54,14 +53,18 @@ func (source FileReader) ProcessFile() LineProcessor {
 		var text = scanner.Text()
 		dataItem := lineProcessor.ProcessLine(index, text)
 		if dataItem != nil {
-			source.lineReader.fillDataItem(text, dataItem)
+			lineErr := source.lineReader.fillDataItem(text, dataItem)
+			if lineErr != nil {
+				return nil, lineErr
+			}
 		}
 
 		index += 1
 	}
 
 	if err := scanner.Err(); err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
-	return lineProcessor
+
+	return lineProcessor, nil
 }

@@ -10,14 +10,16 @@ import (
 func TestAntennaItemsCountCorrect(t *testing.T) {
 	fileReader := getReader()
 
-	AntennaReader := fileReader.ProcessFile()
+	AntennaReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := AntennaReader.(*Reader).RawAntennaData
 	assert.Len(t, rawData.Items, 3)
 }
 
 func TestAntennaMetadataCorrect(t *testing.T) {
 	fileReader := getReader()
-	AntennaReader := fileReader.ProcessFile()
+	AntennaReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := AntennaReader.(*Reader).RawAntennaData
 	metadata := rawData.Metadata
 	assert.NotEmpty(t, metadata)
@@ -27,7 +29,8 @@ func TestAntennaMetadataCorrect(t *testing.T) {
 
 func TestAntennaItemIsCorrect(t *testing.T) {
 	fileReader := getReader()
-	AntennaReader := fileReader.ProcessFile()
+	AntennaReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := AntennaReader.(*Reader).RawAntennaData
 	item := rawData.Items[1]
 	assert.Equal(t, "101", item.Code)
@@ -37,7 +40,8 @@ func TestAntennaItemIsCorrect(t *testing.T) {
 
 func TestAntennaItemWithNotesIsCorrect(t *testing.T) {
 	fileReader := getReader()
-	AntennaReader := fileReader.ProcessFile()
+	AntennaReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := AntennaReader.(*Reader).RawAntennaData
 	item := rawData.Items[0]
 

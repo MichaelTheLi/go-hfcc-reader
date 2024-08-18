@@ -1,0 +1,9 @@
+; Something1-Something2-Something3-
+; AnotherSomething1-AnotherSomething2-
+;--+------------------------------+----------------
+;Co Site Name                      ADM Lati  Longi
+;de                                    tude  tude
+;--+------------------------------+----------------
+A-A Alma Ata                       Some notes
+AAR Alphen aan den Rijn            HOL 52N08 004E38
+ABG Abu Ghraib (Bagdadh)           IRQ 33N19 044E15

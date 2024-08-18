@@ -10,14 +10,16 @@ import (
 func TestFmOrgItemsCountCorrect(t *testing.T) {
 	fileReader := getReader()
 
-	FmOrgReader := fileReader.ProcessFile()
+	FmOrgReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := FmOrgReader.(*Reader).RawFmOrgData
 	assert.Len(t, rawData.Items, 3)
 }
 
 func TestFmOrgMetadataCorrect(t *testing.T) {
 	fileReader := getReader()
-	FmOrgReader := fileReader.ProcessFile()
+	FmOrgReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := FmOrgReader.(*Reader).RawFmOrgData
 	metadata := rawData.Metadata
 	assert.NotEmpty(t, metadata)
@@ -27,7 +29,8 @@ func TestFmOrgMetadataCorrect(t *testing.T) {
 
 func TestFmOrgItemIsCorrect(t *testing.T) {
 	fileReader := getReader()
-	FmOrgReader := fileReader.ProcessFile()
+	FmOrgReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := FmOrgReader.(*Reader).RawFmOrgData
 	item := rawData.Items[0]
 

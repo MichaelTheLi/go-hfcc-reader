@@ -10,14 +10,16 @@ import (
 func TestBroadcasterItemsCountCorrect(t *testing.T) {
 	fileReader := getReader()
 
-	BroadcasterReader := fileReader.ProcessFile()
+	BroadcasterReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := BroadcasterReader.(*Reader).RawBroadcasterData
 	assert.Len(t, rawData.Items, 3)
 }
 
 func TestBroadcasterMetadataCorrect(t *testing.T) {
 	fileReader := getReader()
-	BroadcasterReader := fileReader.ProcessFile()
+	BroadcasterReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := BroadcasterReader.(*Reader).RawBroadcasterData
 	metadata := rawData.Metadata
 	assert.NotEmpty(t, metadata)
@@ -27,7 +29,8 @@ func TestBroadcasterMetadataCorrect(t *testing.T) {
 
 func TestBroadcasterItemIsCorrect(t *testing.T) {
 	fileReader := getReader()
-	BroadcasterReader := fileReader.ProcessFile()
+	BroadcasterReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := BroadcasterReader.(*Reader).RawBroadcasterData
 	item := rawData.Items[0]
 	assert.Equal(t, "ABC", item.Code)

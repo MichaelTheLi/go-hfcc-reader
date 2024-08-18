@@ -9,14 +9,14 @@ import (
 )
 
 func TestItemsCountCorrect(t *testing.T) {
-	provider := getProvider()
-	items := provider.GetData()
+	provider := getProvider("test_hfcc_format_file")
+	items, _ := provider.GetData()
 	assert.NotEmpty(t, items)
 }
 
 func TestFileMetadataCorrect(t *testing.T) {
-	provider := getProvider()
-	data := provider.GetData()
+	provider := getProvider("test_hfcc_format_file")
+	data, _ := provider.GetData()
 	metadata := data.Metadata
 
 	assert.NotEmpty(t, metadata)
@@ -30,8 +30,8 @@ func TestFileMetadataCorrect(t *testing.T) {
 }
 
 func TestItemIsCorrect(t *testing.T) {
-	provider := getProvider()
-	data := provider.GetData()
+	provider := getProvider("test_hfcc_format_file")
+	data, _ := provider.GetData()
 	item := data.ProgramsList["1022"]
 
 	assert.Equal(t, 2485, item.Frequency)
@@ -66,12 +66,20 @@ func TestItemIsCorrect(t *testing.T) {
 	assert.Equal(t, "VBT of VUT at 2485", item.Name())
 }
 
-func getProvider() DataProvider {
+func TestInvalidFileFails(t *testing.T) {
+	provider := getProvider("non_existent_file")
+	data, err := provider.GetData()
+
+	assert.NotEmpty(t, err)
+	assert.Nil(t, data)
+}
+
+func getProvider(name string) DataProvider {
 	programFileProcessor := program.NewProgramFileReader()
 
 	provider := NewDataProvider(
 		reader.NewFileReader(
-			"../resources/test_hfcc_format_file.txt",
+			"../resources/"+name+".txt",
 			reader.NewLineReader(),
 			&programFileProcessor,
 			nil,

@@ -79,8 +79,11 @@ func NewDataProvider(fileReader reader.FileReader) DataProvider {
 	}
 }
 
-func (source DataProvider) GetData() Data {
-	processor := source.fileReader.ProcessFile()
+func (source DataProvider) GetData() (*Data, error) {
+	processor, err := source.fileReader.ProcessFile()
+	if err != nil {
+		return nil, err
+	}
 	rawData := processor.(*program.Reader).RawProgramsData
 
 	for _, item := range rawData.Items {
@@ -90,7 +93,7 @@ func (source DataProvider) GetData() Data {
 
 	source.Data.Metadata = source.getMetadata(rawData)
 
-	return source.Data
+	return &source.Data, nil
 }
 
 func (source DataProvider) getMetadata(rawData program.RawProgramsData) Metadata {

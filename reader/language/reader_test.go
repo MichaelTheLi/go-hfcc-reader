@@ -10,14 +10,16 @@ import (
 func TestLanguageItemsCountCorrect(t *testing.T) {
 	fileReader := getReader()
 
-	LanguageReader := fileReader.ProcessFile()
+	LanguageReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := LanguageReader.(*Reader).RawLanguageData
 	assert.Len(t, rawData.Items, 3)
 }
 
 func TestLanguageMetadataCorrect(t *testing.T) {
 	fileReader := getReader()
-	LanguageReader := fileReader.ProcessFile()
+	LanguageReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := LanguageReader.(*Reader).RawLanguageData
 	metadata := rawData.Metadata
 	assert.NotEmpty(t, metadata)
@@ -27,7 +29,8 @@ func TestLanguageMetadataCorrect(t *testing.T) {
 
 func TestLanguageItemIsCorrect(t *testing.T) {
 	fileReader := getReader()
-	LanguageReader := fileReader.ProcessFile()
+	LanguageReader, err := fileReader.ProcessFile()
+	assert.Nil(t, err)
 	rawData := LanguageReader.(*Reader).RawLanguageData
 	item := rawData.Items[0]
 

@@ -12,7 +12,7 @@ import (
 )
 
 type DataEnricher struct {
-	Data         Data
+	Data         *Data
 	admin        reader.FileReader
 	antenna      reader.FileReader
 	broadcaster  reader.FileReader
@@ -52,7 +52,7 @@ type Site struct {
 }
 
 func NewDataEnricher(
-	data Data,
+	data *Data,
 	admin reader.FileReader,
 	antenna reader.FileReader,
 	broadcaster reader.FileReader,
@@ -72,13 +72,31 @@ func NewDataEnricher(
 	}
 }
 
-func (source DataEnricher) GetEnrichedData() map[string]EnrichedDataItem {
-	administration := source.prepareAdmin()
-	antennas := source.prepareAntenna()
-	broadcasters := source.prepareBroadcaster()
-	fmOrgs := source.prepareFmOrg()
-	languages := source.prepareLanguages()
-	sites := source.prepareSite()
+func (source DataEnricher) GetEnrichedData() (map[string]EnrichedDataItem, error) {
+	administration, adminErr := source.prepareAdmin()
+	if adminErr != nil {
+		return nil, adminErr
+	}
+	antennas, antennasErr := source.prepareAntenna()
+	if antennasErr != nil {
+		return nil, antennasErr
+	}
+	broadcasters, broadcastersErr := source.prepareBroadcaster()
+	if broadcastersErr != nil {
+		return nil, broadcastersErr
+	}
+	fmOrgs, fmOrgsErr := source.prepareFmOrg()
+	if fmOrgsErr != nil {
+		return nil, fmOrgsErr
+	}
+	languages, languagesErr := source.prepareLanguages()
+	if languagesErr != nil {
+		return nil, languagesErr
+	}
+	sites, sitesErr := source.prepareSite()
+	if sitesErr != nil {
+		return nil, sitesErr
+	}
 
 	for _, item := range source.Data.ProgramsList {
 		administrationItem, _ := administration[string(item.Administration)]
@@ -100,11 +118,15 @@ func (source DataEnricher) GetEnrichedData() map[string]EnrichedDataItem {
 		source.EnrichedData[dataItem.Item.Id] = dataItem
 	}
 
-	return source.EnrichedData
+	return source.EnrichedData, nil
 }
 
-func (source DataEnricher) prepareAdmin() map[string]*admin.RawAdminDataItem {
-	data := source.admin.ProcessFile().(*admin.Reader).RawAdminData
+func (source DataEnricher) prepareAdmin() (map[string]*admin.RawAdminDataItem, error) {
+	rawData, err := source.admin.ProcessFile()
+	if err != nil {
+		return nil, err
+	}
+	data := rawData.(*admin.Reader).RawAdminData
 
 	result := make(map[string]*admin.RawAdminDataItem)
 
@@ -112,11 +134,15 @@ func (source DataEnricher) prepareAdmin() map[string]*admin.RawAdminDataItem {
 		result[item.Code] = item
 	}
 
-	return result
+	return result, nil
 }
 
-func (source DataEnricher) prepareAntenna() map[string]*antenna.RawAntennaDataItem {
-	data := source.antenna.ProcessFile().(*antenna.Reader).RawAntennaData
+func (source DataEnricher) prepareAntenna() (map[string]*antenna.RawAntennaDataItem, error) {
+	rawData, err := source.antenna.ProcessFile()
+	if err != nil {
+		return nil, err
+	}
+	data := rawData.(*antenna.Reader).RawAntennaData
 
 	result := make(map[string]*antenna.RawAntennaDataItem)
 
@@ -124,11 +150,15 @@ func (source DataEnricher) prepareAntenna() map[string]*antenna.RawAntennaDataIt
 		result[item.Code] = item
 	}
 
-	return result
+	return result, nil
 }
 
-func (source DataEnricher) prepareBroadcaster() map[string]*broadcaster.RawBroadcasterDataItem {
-	data := source.broadcaster.ProcessFile().(*broadcaster.Reader).RawBroadcasterData
+func (source DataEnricher) prepareBroadcaster() (map[string]*broadcaster.RawBroadcasterDataItem, error) {
+	rawData, err := source.broadcaster.ProcessFile()
+	if err != nil {
+		return nil, err
+	}
+	data := rawData.(*broadcaster.Reader).RawBroadcasterData
 
 	result := make(map[string]*broadcaster.RawBroadcasterDataItem)
 
@@ -136,11 +166,15 @@ func (source DataEnricher) prepareBroadcaster() map[string]*broadcaster.RawBroad
 		result[item.Code] = item
 	}
 
-	return result
+	return result, nil
 }
 
-func (source DataEnricher) prepareFmOrg() map[string]*fmOrg.RawFmOrgDataItem {
-	data := source.fmorg.ProcessFile().(*fmOrg.Reader).RawFmOrgData
+func (source DataEnricher) prepareFmOrg() (map[string]*fmOrg.RawFmOrgDataItem, error) {
+	rawData, err := source.fmorg.ProcessFile()
+	if err != nil {
+		return nil, err
+	}
+	data := rawData.(*fmOrg.Reader).RawFmOrgData
 
 	result := make(map[string]*fmOrg.RawFmOrgDataItem)
 
@@ -148,11 +182,15 @@ func (source DataEnricher) prepareFmOrg() map[string]*fmOrg.RawFmOrgDataItem {
 		result[item.Code] = item
 	}
 
-	return result
+	return result, nil
 }
 
-func (source DataEnricher) prepareLanguages() map[string]*language.RawLanguageDataItem {
-	data := source.language.ProcessFile().(*language.Reader).RawLanguageData
+func (source DataEnricher) prepareLanguages() (map[string]*language.RawLanguageDataItem, error) {
+	rawData, err := source.language.ProcessFile()
+	if err != nil {
+		return nil, err
+	}
+	data := rawData.(*language.Reader).RawLanguageData
 
 	result := make(map[string]*language.RawLanguageDataItem)
 
@@ -160,11 +198,15 @@ func (source DataEnricher) prepareLanguages() map[string]*language.RawLanguageDa
 		result[item.Code] = item
 	}
 
-	return result
+	return result, nil
 }
 
-func (source DataEnricher) prepareSite() map[string]*site.RawSiteDataItem {
-	data := source.site.ProcessFile().(*site.Reader).RawSiteData
+func (source DataEnricher) prepareSite() (map[string]*site.RawSiteDataItem, error) {
+	rawData, err := source.site.ProcessFile()
+	if err != nil {
+		return nil, err
+	}
+	data := rawData.(*site.Reader).RawSiteData
 
 	result := make(map[string]*site.RawSiteDataItem)
 
@@ -172,5 +214,5 @@ func (source DataEnricher) prepareSite() map[string]*site.RawSiteDataItem {
 		result[item.Code] = item
 	}
 
-	return result
+	return result, nil
 }

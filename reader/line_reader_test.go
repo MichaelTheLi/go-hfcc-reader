@@ -95,3 +95,18 @@ func TestShortStringIgnored(t *testing.T) {
 	assert.Equal(t, "", testItemObj.Single)
 	assert.Equal(t, "", testItemObj.Rest)
 }
+
+type testItemTrimmedFormat struct {
+	One string `start:"1" end:"5"`
+	Two string `start:"6"`
+}
+
+func TestStringTrimmedIgnored(t *testing.T) {
+	reader := NewLineReader()
+	testString := "123    abc    "
+	testItemObj := testItemTrimmedFormat{}
+	_ = reader.fillDataItem(testString, &testItemObj)
+
+	assert.Equal(t, "123", testItemObj.One)
+	assert.Equal(t, "abc", testItemObj.Two)
+}

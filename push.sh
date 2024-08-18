@@ -1,1 +1,1 @@
- GOPROXY=proxy.golang.org go list -m github.com/MichaelTheLi/go-hfcc-reader@v0.1.3
+ GOPROXY=proxy.golang.org go list -m github.com/MichaelTheLi/go-hfcc-reader@v0.1.4

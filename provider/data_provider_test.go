@@ -62,6 +62,8 @@ func TestItemIsCorrect(t *testing.T) {
 	assert.Equal(t, "1022", item.Id)
 	assert.Equal(t, []int{1234, 2345, 3456}, item.AlternativeFrequencies)
 	assert.Equal(t, "NZL", item.Notes)
+	assert.Equal(t, "2485", item.FreqString())
+	assert.Equal(t, "VBT of VUT at 2485", item.Name())
 }
 
 func getProvider() DataProvider {

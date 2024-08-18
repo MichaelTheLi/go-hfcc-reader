@@ -1,6 +1,7 @@
 package reader
 
 import (
+	"errors"
 	"reflect"
 	"strconv"
 	"strings"
@@ -13,7 +14,7 @@ func NewLineReader() LineReader {
 	return LineReader{}
 }
 
-func (lineReader LineReader) fillDataItem(line string, dataItem interface{}) {
+func (lineReader LineReader) fillDataItem(line string, dataItem interface{}) error {
 	interfaceReflection := reflect.ValueOf(dataItem)
 	valueReflection := reflect.Indirect(interfaceReflection)
 
@@ -22,16 +23,22 @@ func (lineReader LineReader) fillDataItem(line string, dataItem interface{}) {
 
 		start, startErr := strconv.Atoi(field.Tag.Get("start"))
 		if startErr != nil {
-			panic(startErr)
+			return errors.New("invalid start tag for the " + field.Name + ": " + startErr.Error())
 		}
 		end, endErr := strconv.Atoi(field.Tag.Get("end"))
 		if endErr != nil {
 			end = len(line)
 		}
+		if start > end {
+			return errors.New("invalid start or end for the " + field.Name + " field: start should be lower than end")
+		}
+
 		fieldValue := trimSubstr(line, start-1, end)
 		valueField := valueReflection.Field(fieldInd)
 		valueField.SetString(fieldValue)
 	}
+
+	return nil
 }
 
 func trimSubstr(input string, start int, length int) string {
